@@ -1,22 +1,8 @@
-import { Client, LogLevel } from "@notionhq/client"
+exports.extendEndDates = async ({ notion, calendar }) => {
 
-async function updatePlantingCalendar() {
   try {
-    // Get the Notion API key from environment variable
-    const notionKey = process.env.NOTION_KEY
-
-    // Get the calendar page ID from environment variable
-    const databaseId = process.env.NOTION_DATABASE
-
     // Get the current date
     const currentDate = new Date().toISOString().slice(0,10)
-
-    // Create a new Notion client
-    // const notion = new Client({ auth: api_key, logLevel: LogLevel.INFO })
-    const notion = new Client({ auth: notionKey })
-
-    // Get the calendar database
-    const calendar = await notion.databases.retrieve({ database_id: databaseId })
 
     // Get the list of calendar entries
     const entries = await notion.databases.query({ database_id: databaseId })
@@ -40,20 +26,22 @@ async function updatePlantingCalendar() {
         property_id: statusPropId
       })
 
+      // If the entry has a date, and isn't done already
+      // To do: theres probably a safer way to do this, not relying on the name of the property value
       if (
         dateProp.date 
         && statusProp.select
         && statusProp.select.name !== "Failed"
         && statusProp.select.name !== "Harvested"
       ) {
-        // console.log("Prop DATE", dateProp)
-        // console.log("Prop STATUS",statusProp)
 
+        // Build an updated date object
         const updatedDate = Object.assign(dateProp.date, {
           start: dateProp.date.start,
           end: currentDate
         })
 
+        // Do the update
         await notion.pages.update({
           page_id: entry.id,
           properties: {
@@ -64,12 +52,7 @@ async function updatePlantingCalendar() {
         })
       }
     }
-
-    // console.log("DONE!!!!!!!")
-    
   } catch (err) {
       console.log(err)
   }
 }
-
-updatePlantingCalendar()
