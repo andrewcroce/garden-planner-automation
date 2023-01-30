@@ -3,14 +3,14 @@ const { defineString } = require('firebase-functions/params')
 const { Client } = require("@notionhq/client")
 
 // My functions
-const extendEndDates = require("./extend-end-dates")
+const { extendEndDates } = require("./extend-end-dates")
 
 // Environment variables
 const NOTION_KEY = defineString("NOTION_KEY")
 const NOTION_DATABASE = defineString("NOTION_DATABASE")
 
 // Run daily at 1:00am ET
-exports.updatePlantingCalendar = functions.pubsub.schedule("every day 12:50").timeZone("America/New_York")
+exports.updatePlantingCalendar = functions.pubsub.schedule("every day 01:00").timeZone("America/New_York")
   .onRun(async () => {
     
     try {

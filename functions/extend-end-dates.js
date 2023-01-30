@@ -5,7 +5,7 @@ exports.extendEndDates = async ({ notion, calendar }) => {
     const currentDate = new Date().toISOString().slice(0,10)
 
     // Get the list of calendar entries
-    const entries = await notion.databases.query({ database_id: databaseId })
+    const entries = await notion.databases.query({ database_id: calendar.id })
 
     // Get the property IDs of the Date & Status properties
     const datePropId = calendar.properties["Date"].id
@@ -53,6 +53,6 @@ exports.extendEndDates = async ({ notion, calendar }) => {
       }
     }
   } catch (err) {
-      console.log(err)
+      console.log("ERROR: ",err)
   }
 }
