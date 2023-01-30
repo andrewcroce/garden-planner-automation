@@ -10,18 +10,18 @@ const NOTION_KEY = defineString("NOTION_KEY")
 const NOTION_DATABASE = defineString("NOTION_DATABASE")
 
 // Run daily at 1:00am ET
-exports.updatePlantingCalendar = functions.pubsub.schedule("every day 01:00").timeZone("America/New_York")
+exports.updatePlantingCalendar = functions.pubsub.schedule("every day 12:50").timeZone("America/New_York")
   .onRun(async () => {
     
     try {
       // Create a new Notion client
-      const notion = await new Client({ auth: NOTION_KEY })
+      const notion = await new Client({ auth: NOTION_KEY.value() })
 
       // Get the calendar database
-      const calendar = await notion.databases.retrieve({ database_id: NOTION_DATABASE })
+      const calendar = await notion.databases.retrieve({ database_id: NOTION_DATABASE.value() })
 
       // Extend relevant calendar entry end dates to today's date
-      extendEndDates({ notion, calendar })
+      await extendEndDates({ notion, calendar })
 
     } catch (error) {
       console.log(error)
