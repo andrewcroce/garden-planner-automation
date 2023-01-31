@@ -1,7 +1,7 @@
 {
   "root": true,
   "env": {
-    "es8": true,
+    "es6": true,
     "node": true
   },
   "parserOptions": {
@@ -12,6 +12,9 @@
     "google"
   ],
   "rules": {
-    "quotes": ["error", "double"]
+    "quotes": ["error", "double"],
+    "semi": [2, "never"],
+    "indent": ["error", 2],
+    "padded-blocks": ["error", { "blocks": "always" }]
   }
 }

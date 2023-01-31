@@ -1,11 +1,12 @@
-exports.extendEndDates = async ({ notion, calendar }) => {
+exports.extendEndDates = async ({notion, calendar}) => {
 
   try {
+
     // Get the current date
-    const currentDate = new Date().toISOString().slice(0,10)
+    const currentDate = new Date().toISOString().slice(0, 10)
 
     // Get the list of calendar entries
-    const entries = await notion.databases.query({ database_id: calendar.id })
+    const entries = await notion.databases.query({database_id: calendar.id})
 
     // Get the property IDs of the Date & Status properties
     const datePropId = calendar.properties["Date"].id
@@ -17,28 +18,29 @@ exports.extendEndDates = async ({ notion, calendar }) => {
       // Get the Date property for this entry
       const dateProp = await notion.pages.properties.retrieve({
         page_id: entry.id,
-        property_id: datePropId
+        property_id: datePropId,
       })
 
       // Get the Status property for this entry
       const statusProp = await notion.pages.properties.retrieve({
         page_id: entry.id,
-        property_id: statusPropId
+        property_id: statusPropId,
       })
 
       // If the entry has a date, and isn't done already
-      // To do: theres probably a safer way to do this, not relying on the name of the property value
+      // To do: theres probably a safer way to do this,
+      // not relying on the name of the property value
       if (
-        dateProp.date 
-        && statusProp.select
-        && statusProp.select.name !== "Failed"
-        && statusProp.select.name !== "Harvested"
+        dateProp.date &&
+        statusProp.select &&
+        statusProp.select.name !== "Failed" &&
+        statusProp.select.name !== "Harvested"
       ) {
 
         // Build an updated date object
         const updatedDate = Object.assign(dateProp.date, {
           start: dateProp.date.start,
-          end: currentDate
+          end: currentDate,
         })
 
         // Do the update
@@ -46,13 +48,19 @@ exports.extendEndDates = async ({ notion, calendar }) => {
           page_id: entry.id,
           properties: {
             "Date": {
-              date: updatedDate
-            }
-          }
+              date: updatedDate,
+            },
+          },
         })
+
       }
+
     }
+
   } catch (err) {
-      console.log("ERROR: ",err)
+
+    console.log("ERROR: ", err)
+
   }
+
 }
